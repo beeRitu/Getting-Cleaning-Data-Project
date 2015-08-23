@@ -16,11 +16,14 @@ train_data<-cbind(subject_train,y_train,x_train)
 #Combine test and train data
 all_data<-rbind(test_data,train_data)
 
-
+#Reassign column names to the first 3 columns 
+#Else default column names are V1, V1.1 ...
 colnames(all_data)[1]<-c("V")
 colnames(all_data)[2]<-c("V0")
 colnames(all_data)[3]<-c("V1")
 
+#Extract columns with mean and std 
+#This can be improved upon by doing it programmatically
 ext_data1<-all_data[,c("V","V0","V1","V2","V3","V4","V5","V6")]
 ext_data2<-all_data[,c("V41","V42","V43","V44","V45","V46")]
 ext_data3<-all_data[,c("V81","V82","V83","V84","V85","V86")]
@@ -34,12 +37,12 @@ ext_data10<-all_data[,c("V424","V425","V426","V427","V428","V429")]
 ext_data11<-all_data[,c("V503","V504","V516","V517","V529","V530")]
 ext_data12<-all_data[,c("V542","V543")]
 
+#Combine all the extracted columns 
 extract_data<-cbind(ext_data1,ext_data2,ext_data3,ext_data4,ext_data5)
 extract_data<-cbind(extract_data,ext_data6,ext_data7,ext_data8,ext_data9)
 extract_data<-cbind(extract_data,ext_data10,ext_data11,ext_data12)
 
-#Now read y_test.txt file
-
+#Name the activity from the corresponding activity number
 for(i in 1:nrow(extract_data)){
   if (extract_data[i,2]>6) {extract_data[i,2]="NA"}
   if (extract_data[i,2]==1) {extract_data[i,2]="walking"}
@@ -49,6 +52,8 @@ for(i in 1:nrow(extract_data)){
   if (extract_data[i,2]==5) {extract_data[i,2]="standing"}
   if (extract_data[i,2]==6) {extract_data[i,2]="laying"}
 }
+
+#Read the variable names corresponding to mean and std dev from features.txt file 
 measure_name<-read.table("./features.txt") #Read features file
 measure_name<-measure_name[c("1","2","3","4","5","6","41","42", 
                                 "43","44","45","46","81","82","83",
@@ -63,16 +68,22 @@ measure_name<-measure_name[c("1","2","3","4","5","6","41","42",
                                 "504","516","517","529","530",
                                 "542","543"),]
 
+#Change column 2 of measure_name to character vector instead of factors in dataframe
 measure_name<-as.character(measure_name[,2]) 
+#Remove () from variable name
 measure_name<-gsub("\\(|\\)","",measure_name)
+#Change "-" to "_" in variable name 
 measure_name<-gsub("-","_",measure_name)
 
+#Assign column names 
 colnames(extract_data)<-c("Subject","Activity",measure_name)
 
+#Create tidy data
 tidy_data<-extract_data%>%
   group_by(Subject,Activity)%>%
   summarise_each(funs(mean))
 
+#Write tidy data to text file
 write.table(tidy_data,file="./tidydata.txt",row.names = FALSE)
 
 
