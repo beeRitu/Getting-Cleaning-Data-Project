@@ -1,5 +1,6 @@
-#All the project data has been saved in the directory ./dataProject
-#./dataProject is also the working directory for R
+#Current working directory contains the folders test,train
+#Current working directory also contains features.txt
+#R code is saved in the current working directory as run_analysis.R
 x_test<-read.table("./test/X_test.txt") #Read X_test file
 x_train<-read.table("./train/X_train.txt") #Read X_train file
 y_test<-read.table("./test/y_test.txt") #Read y_test file
@@ -78,6 +79,7 @@ measure_name<-gsub("-","_",measure_name)
 #Assign column names 
 colnames(extract_data)<-c("Subject","Activity",measure_name)
 
+#Package dplyr is required to use group_by and summarise_each functions
 #Create tidy data
 tidy_data<-extract_data%>%
   group_by(Subject,Activity)%>%
