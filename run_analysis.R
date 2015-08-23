@@ -85,6 +85,9 @@ tidy_data<-extract_data%>%
   group_by(Subject,Activity)%>%
   summarise_each(funs(mean))
 
+#Prefix avg to the column name to indicate average of the std dev and mean values
+colnames(tidy_data)[3:68] <- paste("avg", colnames(tidy_data)[3:68], sep = "_")
+
 #Write tidy data to text file
 write.table(tidy_data,file="./tidydata.txt",row.names = FALSE)
 

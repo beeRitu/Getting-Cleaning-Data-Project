@@ -103,6 +103,13 @@ tidy_data<-extract_data%>%
   summarise_each(funs(mean))
 ```
 
+Prefix **avg_** is added to the column variable names to indicate that the variables are average of std dev and mean values.
+
+```{r}
+#Prefix avg to the column name to indicate average of the std dev and mean values
+colnames(tidy_data)[3:66] <- paste("avg", colnames(tidy_data)[3:66], sep = "_")
+```
+
 Finally, **write.table()** is used to write **tidy_data** into the text file **tidydata.txt**.
 
 ```{r}
